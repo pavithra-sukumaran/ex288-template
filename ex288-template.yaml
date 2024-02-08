@@ -1,7 +1,6 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  app: cakephp-mysql-example
   template: cakephp-mysql-example
 message: |-
   The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.
