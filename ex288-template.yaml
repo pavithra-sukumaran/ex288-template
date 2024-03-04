@@ -136,6 +136,8 @@ objects:
       spec:
         containers:
         - env:
+          - name: HELLO_MESSAGE
+            value: ${HELLO_MESSAGE}
           - name: DATABASE_SERVICE_NAME
             value: ${DATABASE_SERVICE_NAME}
           - name: DATABASE_ENGINE
@@ -383,6 +385,6 @@ parameters:
   value: mysql_native_password
 - description: App1 deployment 
   name: HELLO_MESSAGE 
-  value: 'Engineer'
+  value: 'Bjourn'
 
   
