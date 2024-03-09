@@ -332,7 +332,7 @@ parameters:
     blank a value will be defaulted.
   displayName: Application Hostname
   name: APPLICATION_DOMAIN
-  required: true 
+  value: https:hellopenshift.com 
 - description: Github trigger secret.  A difficult to guess string encoded as part
     of the webhook URL.  Not encrypted.
   displayName: GitHub Webhook Secret
