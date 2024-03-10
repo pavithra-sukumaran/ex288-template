@@ -373,7 +373,7 @@ parameters:
   displayName: MySQL authentication plugin
   name: MYSQL_DEFAULT_AUTHENTICATION_PLUGIN
   value: mysql_native_password
-- description: App1 deployment 
+- description: App1 Deployment 
   name: HELLO_MESSAGE 
   value: 'Bjourn'
 
