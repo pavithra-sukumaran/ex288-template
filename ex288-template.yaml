@@ -136,8 +136,6 @@ objects:
       spec:
         containers:
         - env:
-          - name: HELLO_MESSAGE
-            value: ${HELLO_MESSAGE}
           - name: DATABASE_SERVICE_NAME
             value: ${DATABASE_SERVICE_NAME}
           - name: DATABASE_ENGINE
@@ -166,6 +164,8 @@ objects:
                 name: ${NAME}
           - name: OPCACHE_REVALIDATE_FREQ
             value: ${OPCACHE_REVALIDATE_FREQ}
+          - name: HELLO_MESSAGE
+            value: ${HELLO_MESSAGE}
           image: ' '
           livenessProbe:
             httpGet:
