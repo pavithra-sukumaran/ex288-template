@@ -1,7 +1,8 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: cakephp-mysql-example
+  app: cakephp-mysql-example
+  template: php-app
 message: |-
   The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.
 
@@ -28,8 +29,8 @@ metadata:
   creationTimestamp: "2022-08-24T22:36:48Z"
   labels:
     samples.operator.openshift.io/managed: "true"
-  name: cakephp-mysql-example
-  namespace: openshift
+  name: ex288-php-mysql
+  namespace: indy
   resourceVersion: "26175"
   uid: 6c66289f-734b-48aa-a375-f2116e23bd86
 objects:
@@ -45,6 +46,7 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
+    template: php-app
     annotations:
       description: Exposes and load balances the application pods
       service.alpha.openshift.io/dependencies: '[{"name": "${DATABASE_SERVICE_NAME}",
@@ -60,6 +62,7 @@ objects:
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
+    template: php-app
     name: ${NAME}
   spec:
     host: ${APPLICATION_DOMAIN}
@@ -69,12 +72,14 @@ objects:
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
+    template: php-app
     annotations:
       description: Keeps track of changes in the application image
     name: ${NAME}
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
+    template: php-app
     annotations:
       description: Defines how to build the application
       template.alpha.openshift.io/wait-for-ready: "true"
@@ -99,7 +104,7 @@ objects:
           value: ${COMPOSER_MIRROR}
         from:
           kind: ImageStreamTag
-          name: php:3.2.22
+          name: php:7.3
           namespace: ${NAMESPACE}
       type: Source
     triggers:
@@ -111,6 +116,7 @@ objects:
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
+    template: php-app
     annotations:
       description: Defines how to deploy the application server
       template.alpha.openshift.io/wait-for-ready: "true"
@@ -136,6 +142,8 @@ objects:
       spec:
         containers:
         - env:
+          - name: HELLO_AUDIENCE
+            value: ${HELLO_AUDIENCE}
           - name: DATABASE_SERVICE_NAME
             value: ${DATABASE_SERVICE_NAME}
           - name: DATABASE_ENGINE
@@ -164,8 +172,6 @@ objects:
                 name: ${NAME}
           - name: OPCACHE_REVALIDATE_FREQ
             value: ${OPCACHE_REVALIDATE_FREQ}
-          - name: HELLO_MESSAGE
-            value: ${HELLO_MESSAGE}
           image: ' '
           livenessProbe:
             httpGet:
@@ -200,6 +206,7 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
+    template: php-app
     annotations:
       description: Exposes the database server
     name: ${DATABASE_SERVICE_NAME}
@@ -213,6 +220,7 @@ objects:
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
+    template: php-app
     annotations:
       description: Defines how to deploy the database
       template.alpha.openshift.io/wait-for-ready: "true"
@@ -280,7 +288,7 @@ objects:
         - mysql
         from:
           kind: ImageStreamTag
-          name: mysql:3.22.4
+          name: mysql:8.0
           namespace: ${NAMESPACE}
       type: ImageChange
     - type: ConfigChange
@@ -295,6 +303,16 @@ parameters:
   name: NAMESPACE
   required: true
   value: openshift
+- description: Version of PHP image to be used (7.3-ubi7, 7.4-ubi8, or latest).
+  displayName: PHP Version
+  name: PHP_VERSION
+  required: true
+  value: 7.4-ubi8
+- description: Version of MySQL image to be used (8.0-el8 or latest).
+  displayName: MySQL Version
+  name: MYSQL_VERSION
+  required: true
+  value: 8.0-el8
 - description: Maximum amount of memory the CakePHP container can use.
   displayName: Memory Limit
   name: MEMORY_LIMIT
@@ -309,7 +327,7 @@ parameters:
   displayName: Git Repository URL
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: https://github.com/creamvdp-exzzz.git
+  value: https://github.com/sclorg/cakephp-ex.git
 - description: Set this to a branch name, tag or other ref of your repository if you
     are not using the default branch.
   displayName: Git Reference
@@ -322,7 +340,11 @@ parameters:
     blank a value will be defaulted.
   displayName: Application Hostname
   name: APPLICATION_DOMAIN
-  value: https:hellopenshift.com 
+  value: ""
+  required: true
+- name: HELLO_AUDIENCE 
+  required: false
+  value: Engineer 
 - description: Github trigger secret.  A difficult to guess string encoded as part
     of the webhook URL.  Not encrypted.
   displayName: GitHub Webhook Secret
@@ -373,8 +395,3 @@ parameters:
   displayName: MySQL authentication plugin
   name: MYSQL_DEFAULT_AUTHENTICATION_PLUGIN
   value: mysql_native_password
-- description: App1 Deployment 
-  name: HELLO_MESSAGE 
-  value: 'audy'
-
-  
